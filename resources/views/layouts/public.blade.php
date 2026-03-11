@@ -55,6 +55,9 @@
         .hero-pattern { background-image: radial-gradient(circle at 1px 1px, rgba(99,102,241,0.08) 1px, transparent 0); background-size: 40px 40px; }
     </style>
     @stack('styles')
+
+    <!-- Third-Party Tracking Codes -->
+    {!! \App\Services\EventTrackingService::renderAllEnabled() !!}
 </head>
 <body class="bg-white text-gray-900 font-sans antialiased" x-data="{ mobileMenu: false }" x-cloak>
 

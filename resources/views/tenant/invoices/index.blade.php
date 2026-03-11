@@ -21,6 +21,19 @@
     @endforeach
 </div>
 
+{{-- Recurring Management --}}
+<div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h3 class="text-sm font-semibold text-gray-900">Recurring Invoices</h3>
+            <p class="text-xs text-gray-500">Manage your recurring invoice templates</p>
+        </div>
+        <a href="{{ route('dashboard.invoices.recurring.index') }}" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition">
+            <i class="fas fa-sync mr-1"></i>Manage Recurring
+        </a>
+    </div>
+</div>
+
 {{-- Filters --}}
 <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
     <form method="GET" class="flex flex-wrap items-end gap-3">

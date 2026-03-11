@@ -33,6 +33,11 @@ class MilestoneController extends Controller
             abort(422, 'Invoice must belong to the same campaign to link.');
         }
 
+        // Prevent linking to cancelled invoices
+        if ($invoice->isCancelled()) {
+            abort(422, 'Cannot link milestone to cancelled invoice.');
+        }
+
         return $invoice->id;
     }
 

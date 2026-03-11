@@ -71,7 +71,9 @@
     {{-- Revenue Chart --}}
     <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
         <h3 class="text-sm font-bold text-gray-900 mb-4">Revenue Trend — Last 6 Months</h3>
-        <canvas id="revenueChart" height="200"></canvas>
+        <div class="h-56">
+            <canvas id="revenueChart"></canvas>
+        </div>
     </div>
 
     {{-- Invoice Breakdown --}}

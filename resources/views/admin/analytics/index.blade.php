@@ -7,13 +7,17 @@
     {{-- Tenant Growth --}}
     <div class="bg-white rounded-xl border border-gray-200 p-6">
         <h3 class="text-sm font-bold text-gray-900 mb-4">Tenant Growth (Last 12 Months)</h3>
-        <canvas id="tenantGrowthChart" height="250"></canvas>
+        <div class="h-64">
+            <canvas id="tenantGrowthChart"></canvas>
+        </div>
     </div>
 
     {{-- Invoice Volume --}}
     <div class="bg-white rounded-xl border border-gray-200 p-6">
         <h3 class="text-sm font-bold text-gray-900 mb-4">Invoice Volume (Last 12 Months)</h3>
-        <canvas id="invoiceVolumeChart" height="250"></canvas>
+        <div class="h-64">
+            <canvas id="invoiceVolumeChart"></canvas>
+        </div>
     </div>
 </div>
 

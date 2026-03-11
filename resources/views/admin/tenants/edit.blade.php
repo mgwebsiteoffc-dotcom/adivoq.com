@@ -124,14 +124,6 @@
 
         {{-- Actions --}}
         <div class="flex items-center justify-between">
-            <form method="POST" action="{{ route('admin.tenants.destroy', $tenant) }}"
-                  onsubmit="return confirm('PERMANENTLY DELETE {{ $tenant->name }} and ALL its data? This action CANNOT be undone.')">
-                @csrf @method('DELETE')
-                <button type="submit" class="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition">
-                    <i class="fas fa-trash mr-1.5"></i>Delete Tenant
-                </button>
-            </form>
-
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.tenants.show', $tenant) }}" class="px-5 py-2.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
                     Cancel
@@ -140,7 +132,17 @@
                     <i class="fas fa-save mr-1.5"></i>Save Changes
                 </button>
             </div>
+            {{-- delete form separated outside main form to avoid nesting issues --}}
         </div>
+    </form>
+
+    {{-- Separate delete form so it isn't nested inside the update form --}}
+    <form method="POST" action="{{ route('admin.tenants.destroy', $tenant) }}"
+          onsubmit="return confirm('PERMANENTLY DELETE {{ $tenant->name }} and ALL its data? This action CANNOT be undone.')" class="mt-4">
+        @csrf @method('DELETE')
+        <button type="submit" class="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition">
+            <i class="fas fa-trash mr-1.5"></i>Delete Tenant
+        </button>
     </form>
 </div>
 @endsection

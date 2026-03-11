@@ -15,6 +15,9 @@ Schedule::command('tenants:reset-monthly-counters')->monthlyOn(1, '00:30');
 
 Schedule::command('invoices:generate-recurring')->dailyAt('01:10');
 
+// Apply pending plan changes daily
+Schedule::command('subscriptions:apply-pending-changes')->dailyAt('02:00');
+
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');

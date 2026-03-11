@@ -6,13 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Models\TenantSubscription;
 use App\Models\TenantSubscriptionEvent;
+use App\Models\SubscriptionPayment;
 use App\Services\RazorpayPlatformService;
+use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class RazorpayPlatformWebhookController extends Controller
 {
+    public function __construct(
+        private SubscriptionService $subscriptionService
+    ) {}
+
     public function handle(Request $request, RazorpayPlatformService $rzp)
     {
         $signature = $request->header('X-Razorpay-Signature');
@@ -91,12 +97,26 @@ class RazorpayPlatformWebhookController extends Controller
                             'subscription_ends_at' => $local->current_end_at,
                             'status' => 'active',
                         ]);
+
+                        // Apply any pending plan changes when subscription becomes active
+                        if ($tenant->pending_plan) {
+                            $this->subscriptionService->applyPendingPlanChanges();
+                        }
                     } elseif (in_array($status, ['cancelled', 'completed', 'expired', 'halted'])) {
-                        $tenant->update([
-                            'plan_status' => 'cancelled',
-                            // keep subscription_ends_at as-is
-                        ]);
                     }
+                }
+            }
+
+            // Record subscription payment if this is a payment event
+            if ($paymentEntity && in_array($event, ['payment.captured', 'payment.failed'])) {
+                try {
+                    $this->subscriptionService->recordPayment($paymentEntity);
+                } catch (\Exception $e) {
+                    // Log but don't fail the webhook
+                    \Log::error("Failed to record subscription payment: " . $e->getMessage(), [
+                        'payment_id' => $paymentId,
+                        'subscription_id' => $subId,
+                    ]);
                 }
             }
 

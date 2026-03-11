@@ -38,7 +38,7 @@ return [
     // Add inside the return array:
 'whatify' => [
     'api_key' => env('WHATIFY_API_KEY'),
-    'base_url' => env('WHATIFY_BASE_URL', 'https://whatify.in/api'),
+    'base_url' => env('WHATIFY_BASE_URL', 'https://whatify.in'),
 ],
 'razorpay_platform' => [
     'key_id' => env('RAZORPAY_PLATFORM_KEY_ID'),

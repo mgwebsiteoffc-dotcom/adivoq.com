@@ -12,16 +12,38 @@
             @if($tenant->subscription_ends_at)
                 <p class="text-xs text-gray-500 mt-1">Valid until: {{ $tenant->subscription_ends_at->format('M d, Y') }}</p>
             @endif
+            @if($tenant->pending_plan)
+                <div class="mt-2 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p class="text-sm text-yellow-800">
+                        <i class="fas fa-clock mr-1"></i>
+                        <strong>Pending Change:</strong> {{ ucfirst($tenant->pending_plan) }} plan
+                        @if($tenant->pending_plan_effective_at)
+                            effective {{ $tenant->pending_plan_effective_at->format('M d, Y') }}
+                        @endif
+                    </p>
+                    <form method="POST" action="{{ route('dashboard.billing.cancel-pending-change') }}" class="mt-2 inline">
+                        @csrf
+                        <button type="submit" class="text-xs text-yellow-700 hover:text-yellow-900 underline">
+                            Cancel Change
+                        </button>
+                    </form>
+                </div>
+            @endif
         </div>
 
-        @if($subscription && in_array($subscription->status, ['active','authenticated']))
-            <form method="POST" action="{{ route('dashboard.billing.cancel') }}" onsubmit="return confirm('Cancel at end of cycle?')">
-                @csrf
-                <button class="px-5 py-2.5 bg-red-100 text-red-700 rounded-lg text-sm font-black hover:bg-red-200">
-                    Cancel Subscription
-                </button>
-            </form>
-        @endif
+        <div class="flex gap-2">
+            <a href="{{ route('dashboard.billing.history') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">
+                <i class="fas fa-history mr-1"></i>Payment History
+            </a>
+            @if($subscription && in_array($subscription->status, ['active','authenticated']))
+                <form method="POST" action="{{ route('dashboard.billing.cancel') }}" onsubmit="return confirm('Cancel at end of cycle?')">
+                    @csrf
+                    <button class="px-5 py-2.5 bg-red-100 text-red-700 rounded-lg text-sm font-black hover:bg-red-200">
+                        Cancel Subscription
+                    </button>
+                </form>
+            @endif
+        </div>
     </div>
 </div>
 
@@ -45,8 +67,8 @@
         <button
             class="mt-6 w-full px-5 py-3 rounded-xl text-sm font-black {{ $tenant->plan === $key ? 'bg-gray-100 text-gray-500' : 'bg-indigo-600 text-white hover:bg-indigo-700' }}"
             {{ $tenant->plan === $key ? 'disabled' : '' }}
-            onclick="startCheckout('{{ $key }}')">
-            {{ $tenant->plan === $key ? 'Current Plan' : 'Upgrade to ' . $p['name'] }}
+            onclick="{{ $tenant->plan === $key ? '' : ($subscription && in_array($subscription->status, ['active', 'authenticated']) ? 'changePlan(\'' . $key . '\')' : 'startCheckout(\'' . $key . '\')') }}">
+            {{ $tenant->plan === $key ? 'Current Plan' : ($plans[$key]['price'] > $plans[$tenant->plan]['price'] ? 'Upgrade to ' : 'Change to ') . $p['name'] }}
         </button>
     </div>
 @endforeach
@@ -57,6 +79,32 @@
 @push('scripts')
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+async function changePlan(planKey) {
+    const msg = document.getElementById('billing_msg');
+    msg.className = 'mt-6 text-sm text-gray-700';
+    msg.innerText = 'Changing plan...';
+
+    const res = await fetch("{{ route('dashboard.billing.change-plan') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: JSON.stringify({ plan: planKey })
+    });
+
+    const json = await res.json();
+    if (json.success === false) {
+        msg.className = 'mt-6 text-sm text-red-600';
+        msg.innerText = json.message || 'Failed to change plan.';
+        return;
+    }
+
+    // Reload page to show updated plan
+    window.location.reload();
+}
+
 async function startCheckout(planKey) {
     const msg = document.getElementById('billing_msg');
     msg.className = 'mt-6 text-sm text-gray-700';

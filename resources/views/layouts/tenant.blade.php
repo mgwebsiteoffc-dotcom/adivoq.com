@@ -15,6 +15,9 @@
     </style>
 
     @stack('styles')
+
+    <!-- Third-Party Tracking Codes -->
+    {!! \App\Services\EventTrackingService::renderAllEnabled() !!}
 </head>
 
 <body class="bg-gray-50" x-data="{ sidebarOpen: true }" x-cloak>
@@ -77,6 +80,8 @@
                     <span x-show="sidebarOpen" class="ml-3">{{ $item['label'] }}</span>
                 </a>
             @endforeach
+
+            
 
             {{-- Tax submenu (finance roles only) --}}
             @if($u->canManageFinances())

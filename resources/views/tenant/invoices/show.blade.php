@@ -324,6 +324,45 @@
 
         </div>
 
+        {{-- Linked Milestones --}}
+        @if($invoice->milestones->count())
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 class="text-sm font-bold text-gray-900 mb-4"><i class="fas fa-flag mr-2 text-blue-500"></i>Milestones ({{ $invoice->milestones->count() }})</h3>
+                <div class="space-y-3">
+                    @foreach($invoice->milestones as $milestone)
+                        <div class="flex items-start justify-between py-3 border-b border-gray-50 last:border-0">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <p class="text-sm font-semibold text-gray-900">{{ $milestone->title }}</p>
+                                    @php
+                                        $statusColors = [
+                                            'pending' => 'gray',
+                                            'in_progress' => 'blue',
+                                            'completed' => 'green'
+                                        ];
+                                    @endphp
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-{{ $statusColors[$milestone->status] ?? 'gray' }}-100 text-{{ $statusColors[$milestone->status] ?? 'gray' }}-700">
+                                        {{ ucfirst(str_replace('_', ' ', $milestone->status)) }}
+                                    </span>
+                                </div>
+                                @if($milestone->description)
+                                    <p class="text-xs text-gray-500 mt-1">{{ Str::limit($milestone->description, 60) }}</p>
+                                @endif
+                                @if($milestone->due_date)
+                                    <p class="text-xs text-gray-400 mt-1">Due: {{ $milestone->due_date->format('M d, Y') }}</p>
+                                @endif
+                            </div>
+                            @if($milestone->amount > 0)
+                                <div class="text-right ml-2">
+                                    <p class="text-sm font-bold text-gray-900">₹{{ number_format($milestone->amount, 2) }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         {{-- Activity Log --}}
         <div class="bg-white rounded-xl border border-gray-200 p-6">
             <h3 class="text-sm font-bold text-gray-900 mb-4"><i class="fas fa-stream mr-2 text-gray-400"></i>Activity Log</h3>

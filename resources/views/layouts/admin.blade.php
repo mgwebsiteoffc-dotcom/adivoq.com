@@ -31,6 +31,7 @@
                         ['route' => 'admin.admin-users.index', 'icon' => 'fa-user-shield', 'label' => 'Admin Users'],
                         ['route' => 'admin.activity-logs.index', 'icon' => 'fa-history', 'label' => 'Activity Logs'],
                         ['route' => 'admin.analytics.index', 'icon' => 'fa-chart-line', 'label' => 'Analytics'],
+                        ['route' => 'admin.tracking-codes.index', 'icon' => 'fa-globe', 'label' => 'Tracking Codes'],
                         ['route' => 'admin.settings.index', 'icon' => 'fa-cog', 'label' => 'Settings'],
                     ];
                 @endphp

@@ -35,6 +35,17 @@ Route::get('/privacy-policy', fn () => view('public.privacy'))->name('privacy');
 Route::get('/terms-of-service', fn () => view('public.terms'))->name('terms');
 Route::get('/refund-policy', fn () => view('public.refund'))->name('refund');
 
+/*
+|--------------------------------------------------------------------------
+| TRACKING & WEBHOOKS (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+Route::get('/track/pixel', [App\Http\Controllers\TrackingController::class, 'pixel'])->name('tracking.pixel');
+Route::post('/track/event', [App\Http\Controllers\TrackingController::class, 'event'])->name('tracking.event');
+
+Route::get('/whatsapp/webhook', [App\Http\Controllers\WhatsAppWebhookController::class, 'verify'])->name('whatsapp.webhook.verify');
+Route::post('/whatsapp/webhook', [App\Http\Controllers\WhatsAppWebhookController::class, 'handle'])->name('whatsapp.webhook');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -133,6 +144,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::post('settings/test-whatsapp', [App\Http\Controllers\Admin\SettingController::class, 'testWhatsApp'])->name('settings.test-whatsapp');
+
+        // Tracking Codes & Analytics
+        Route::resource('tracking-codes', App\Http\Controllers\Admin\TrackingCodeController::class);
+        Route::post('tracking-codes/{trackingCode}/toggle', [App\Http\Controllers\Admin\TrackingCodeController::class, 'toggle'])->name('tracking-codes.toggle');
     });
 });
 
@@ -179,6 +195,14 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'tenant'])->
     Route::middleware('role:owner,manager,accountant')->group(function () {
 
         // Invoices
+        // Recurring invoices (must come before resource route)
+        Route::get('invoices/recurring', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'index'])->name('invoices.recurring.index');
+        Route::get('invoices/{invoice}/recurring', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'edit'])->name('invoices.recurring.edit');
+        Route::put('invoices/{invoice}/recurring', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'update'])->name('invoices.recurring.update');
+        Route::delete('invoices/{invoice}/recurring', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'destroy'])->name('invoices.recurring.destroy');
+        Route::post('invoices/{invoice}/recurring/pause', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'pause'])->name('invoices.recurring.pause');
+        Route::post('invoices/{invoice}/recurring/resume', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'resume'])->name('invoices.recurring.resume');
+
         Route::resource('invoices', App\Http\Controllers\Tenant\InvoiceController::class);
         Route::post('invoices/{invoice}/send-email', [App\Http\Controllers\Tenant\InvoiceController::class, 'sendEmail'])->name('invoices.send-email');
         Route::post('invoices/{invoice}/send-whatsapp', [App\Http\Controllers\Tenant\InvoiceController::class, 'sendWhatsApp'])->name('invoices.send-whatsapp');
@@ -188,11 +212,6 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'tenant'])->
         Route::post('invoices/{invoice}/send-reminder', [App\Http\Controllers\Tenant\InvoiceController::class, 'sendReminder'])->name('invoices.send-reminder');
         Route::post('invoices/{invoice}/duplicate', [App\Http\Controllers\Tenant\InvoiceController::class, 'duplicate'])->name('invoices.duplicate');
         Route::post('invoices/{invoice}/cancel', [App\Http\Controllers\Tenant\InvoiceController::class, 'cancel'])->name('invoices.cancel');
-
-        // Recurring invoices
-        Route::get('invoices/{invoice}/recurring', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'edit'])->name('invoices.recurring.edit');
-        Route::put('invoices/{invoice}/recurring', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'update'])->name('invoices.recurring.update');
-        Route::delete('invoices/{invoice}/recurring', [App\Http\Controllers\Tenant\RecurringInvoiceController::class, 'destroy'])->name('invoices.recurring.destroy');
 
          // ✅ Auto-create invoice from milestone
     Route::post('milestones/{milestone}/create-invoice', [App\Http\Controllers\Tenant\InvoiceController::class, 'createFromMilestone'])
@@ -229,6 +248,10 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'tenant'])->
 
         // Billing (subscription)
         Route::get('billing', [App\Http\Controllers\Tenant\BillingController::class, 'index'])->name('billing.index');
+        Route::post('billing/change-plan', [App\Http\Controllers\Tenant\BillingController::class, 'changePlan'])->name('billing.change-plan');
+        Route::post('billing/cancel-pending-change', [App\Http\Controllers\Tenant\BillingController::class, 'cancelPendingChange'])->name('billing.cancel-pending-change');
+        Route::get('billing/history', [App\Http\Controllers\Tenant\BillingController::class, 'history'])->name('billing.history');
+        Route::get('billing/receipt/{payment}', [App\Http\Controllers\Tenant\BillingController::class, 'downloadReceipt'])->name('billing.receipt');
         Route::post('billing/razorpay/create', [App\Http\Controllers\Tenant\BillingController::class, 'createSubscription'])->name('billing.razorpay.create');
         Route::post('billing/razorpay/verify', [App\Http\Controllers\Tenant\BillingController::class, 'verifySubscription'])->name('billing.razorpay.verify');
         Route::get('billing/result', [App\Http\Controllers\Tenant\BillingController::class, 'result'])->name('billing.result');
@@ -256,6 +279,26 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'tenant'])->
             Route::put('/payment-gateway', [App\Http\Controllers\Tenant\SettingController::class, 'updatePaymentGateway'])->name('payment-gateway');
             Route::put('/password', [App\Http\Controllers\Tenant\SettingController::class, 'updatePassword'])->name('password');
             Route::get('/export/{type}', [App\Http\Controllers\Tenant\SettingController::class, 'export'])->name('export');
+        });
+
+        // --- Tracking & Analytics ---
+        Route::prefix('tracking')->name('tracking.')->group(function () {
+            Route::resource('keys', \App\Http\Controllers\Tenant\TrackingController::class);
+            Route::post('keys/{key}/export', [\App\Http\Controllers\Tenant\TrackingController::class, 'exportEvents'])->name('exportEvents');
+        });
+
+        // --- WhatsApp Chatbot ---
+        Route::prefix('chatbot')->name('chatbot.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Tenant\ChatbotController::class, 'index'])->name('index');
+            Route::get('create', [\App\Http\Controllers\Tenant\ChatbotController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Tenant\ChatbotController::class, 'store'])->name('store');
+            Route::get('{config}', [\App\Http\Controllers\Tenant\ChatbotController::class, 'show'])->name('show');
+            Route::get('{config}/edit', [\App\Http\Controllers\Tenant\ChatbotController::class, 'edit'])->name('edit');
+            Route::put('{config}/rules', [\App\Http\Controllers\Tenant\ChatbotController::class, 'updateRules'])->name('update-rules');
+            Route::post('{config}/toggle', [\App\Http\Controllers\Tenant\ChatbotController::class, 'toggleStatus'])->name('toggle');
+            Route::get('{config}/conversation', [\App\Http\Controllers\Tenant\ChatbotController::class, 'conversation'])->name('conversation');
+            Route::post('{config}/send', [\App\Http\Controllers\Tenant\ChatbotController::class, 'sendMessage'])->name('send');
+            Route::delete('{config}', [\App\Http\Controllers\Tenant\ChatbotController::class, 'destroy'])->name('destroy');
         });
     });
 

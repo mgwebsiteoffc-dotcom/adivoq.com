@@ -15,7 +15,8 @@ class Tenant extends Model
         'name', 'slug', 'email', 'phone', 'logo', 'business_name',
         'address_line1', 'address_line2', 'city', 'state', 'state_code',
         'pincode', 'country', 'pan_number', 'gstin', 'gst_registered',
-        'plan', 'plan_status', 'trial_ends_at', 'subscription_ends_at',
+        'plan', 'pending_plan', 'pending_plan_effective_at', 'plan_status',
+        'trial_ends_at', 'subscription_ends_at',
         'monthly_invoice_count', 'invoice_count_reset_at', 'status',
     ];
 
@@ -23,6 +24,7 @@ class Tenant extends Model
         'gst_registered' => 'boolean',
         'trial_ends_at' => 'datetime',
         'subscription_ends_at' => 'datetime',
+        'pending_plan_effective_at' => 'datetime',
         'invoice_count_reset_at' => 'date',
     ];
 
@@ -51,6 +53,9 @@ class Tenant extends Model
     public function notificationSetting() { return $this->hasOne(NotificationSetting::class); }
     public function paymentGatewaySetting() { return $this->hasOne(PaymentGatewaySetting::class); }
     public function teamInvitations() { return $this->hasMany(TeamInvitation::class); }
+    public function subscriptionPayments() { return $this->hasMany(SubscriptionPayment::class); }
+    public function trackingKeys() { return $this->hasMany(TrackingKey::class); }
+    public function whatsappChatbots() { return $this->hasMany(WhatsAppChatbotConfig::class); }
 
     // Helpers
     public function isActive(): bool { return $this->status === 'active'; }

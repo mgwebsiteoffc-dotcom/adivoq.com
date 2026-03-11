@@ -21,6 +21,7 @@ class GenerateRecurringInvoices extends Command
 
         $templates = Invoice::withoutGlobalScopes()
             ->where('is_recurring', true)
+            ->where('paused', false)
             ->whereNotNull('next_recurring_date')
             ->whereDate('next_recurring_date', '<=', $today)
             ->whereNotIn('status', ['cancelled'])

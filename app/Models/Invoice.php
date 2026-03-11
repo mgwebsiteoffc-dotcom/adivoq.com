@@ -21,7 +21,7 @@ class Invoice extends Model
         'tds_rate', 'tds_amount', 'net_receivable', 'amount_paid', 'amount_due',
         'currency', 'payment_terms', 'payment_terms_days',
         'notes', 'terms_and_conditions',
-        'is_recurring', 'recurring_frequency', 'next_recurring_date',
+        'is_recurring', 'recurring_frequency', 'next_recurring_date', 'paused',
         'payment_link_token', 'payment_link_expires_at',
         'sent_at', 'viewed_at', 'paid_at', 'cancelled_at',
     ];
@@ -47,6 +47,7 @@ class Invoice extends Model
         'amount_paid' => 'decimal:2',
         'amount_due' => 'decimal:2',
         'is_recurring' => 'boolean',
+        'paused' => 'boolean',
         'next_recurring_date' => 'date',
         'payment_link_expires_at' => 'datetime',
         'sent_at' => 'datetime',

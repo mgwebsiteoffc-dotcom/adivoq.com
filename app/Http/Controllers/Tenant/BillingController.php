@@ -4,13 +4,19 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
 use App\Models\TenantSubscription;
+use App\Models\SubscriptionPayment;
 use App\Services\RazorpayPlatformService;
+use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class BillingController extends Controller
 {
+    public function __construct(
+        private SubscriptionService $subscriptionService
+    ) {}
+
     public function index()
     {
         $tenant = auth()->user()->tenant;
@@ -44,19 +50,53 @@ class BillingController extends Controller
 
         $api = $rzp->api();
 
-        // Create customer if not exists
+        // Get or create customer in Razorpay
         $subscription = TenantSubscription::where('tenant_id', $tenant->id)->latest()->first();
-
         $customerId = $subscription?->razorpay_customer_id;
 
         if (!$customerId) {
-            $customer = $api->customer->create([
-                'name' => $tenant->business_name ?? $tenant->name,
-                'email' => $tenant->email,
-                'contact' => $tenant->phone,
-                'notes' => ['tenant_id' => (string)$tenant->id],
-            ]);
-            $customerId = $customer['id'];
+            // First, try to find existing customer by email
+            try {
+                $existingCustomers = $api->customer->all(['email' => $tenant->email]);
+                if (!empty($existingCustomers['items'])) {
+                    $customerId = $existingCustomers['items'][0]['id'];
+                    \Log::info('Using existing Razorpay customer', ['customer_id' => $customerId, 'email' => $tenant->email]);
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Error searching for existing Razorpay customer', ['error' => $e->getMessage()]);
+            }
+
+            // If no existing customer found, create new one
+            if (!$customerId) {
+                try {
+                    $customer = $api->customer->create([
+                        'name' => $tenant->business_name ?? $tenant->name,
+                        'email' => $tenant->email,
+                        'contact' => $tenant->phone,
+                        'notes' => ['tenant_id' => (string)$tenant->id],
+                    ]);
+                    $customerId = $customer['id'];
+                    \Log::info('Created new Razorpay customer', ['customer_id' => $customerId]);
+                } catch (\Razorpay\Api\Errors\BadRequestError $e) {
+                    if (str_contains($e->getMessage(), 'Customer already exists')) {
+                        // Try to find the customer again in case of race condition
+                        try {
+                            $existingCustomers = $api->customer->all(['email' => $tenant->email]);
+                            if (!empty($existingCustomers['items'])) {
+                                $customerId = $existingCustomers['items'][0]['id'];
+                                \Log::info('Found existing customer after creation error', ['customer_id' => $customerId]);
+                            } else {
+                                throw new \Exception('Unable to find or create customer');
+                            }
+                        } catch (\Exception $retryError) {
+                            \Log::error('Failed to find customer after creation error', ['error' => $retryError->getMessage()]);
+                            throw $retryError;
+                        }
+                    } else {
+                        throw $e;
+                    }
+                }
+            }
         }
 
         // Create subscription
@@ -184,5 +224,120 @@ class BillingController extends Controller
         ]);
 
         return back()->with('success', 'Subscription cancellation requested (at cycle end).');
+    }
+
+    /**
+     * Change plan (upgrade/downgrade)
+     */
+    public function changePlan(Request $request)
+    {
+        $tenant = auth()->user()->tenant;
+
+        $request->validate([
+            'plan' => 'required|in:starter,professional,enterprise',
+        ]);
+
+        $newPlan = $request->plan;
+
+        \Log::info('Change plan request', [
+            'tenant_id' => $tenant->id,
+            'current_plan' => $tenant->plan,
+            'new_plan' => $newPlan,
+            'subscription_status' => $tenant->subscription?->status ?? 'no_subscription'
+        ]);
+
+        if ($tenant->plan === $newPlan) {
+            $message = 'You are already on this plan.';
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
+        }
+
+        try {
+            $success = $this->subscriptionService->changePlan($tenant, $newPlan);
+
+            if ($success) {
+                $plans = config('invoicehero.plans');
+                $planName = $plans[$newPlan]['name'] ?? $newPlan;
+
+                if ($tenant->pending_plan) {
+                    $message = "Plan change to {$planName} scheduled for cycle end ({$tenant->pending_plan_effective_at->format('M d, Y')}).";
+                } else {
+                    $message = "Plan upgraded to {$planName} successfully!";
+                }
+
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => true, 'message' => $message]);
+                }
+                return back()->with('success', $message);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Change plan failed', [
+                'tenant_id' => $tenant->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $message = 'Failed to change plan: ' . $e->getMessage();
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
+        }
+
+        \Log::warning('Change plan returned false', [
+            'tenant_id' => $tenant->id,
+            'current_plan' => $tenant->plan,
+            'new_plan' => $newPlan
+        ]);
+        $message = 'Failed to change plan. Please try again.';
+        if ($request->expectsJson()) {
+            return response()->json(['success' => false, 'message' => $message]);
+        }
+        return back()->with('error', $message);
+    }
+
+    /**
+     * Cancel pending plan change
+     */
+    public function cancelPendingChange()
+    {
+        $tenant = auth()->user()->tenant;
+
+        if ($this->subscriptionService->cancelPendingPlanChange($tenant)) {
+            return back()->with('success', 'Pending plan change cancelled.');
+        }
+
+        return back()->with('error', 'No pending plan change found.');
+    }
+
+    /**
+     * Subscription payment history
+     */
+    public function history()
+    {
+        $tenant = auth()->user()->tenant;
+
+        $payments = SubscriptionPayment::where('tenant_id', $tenant->id)
+            ->with('subscription')
+            ->latest('payment_date')
+            ->paginate(20);
+
+        return view('tenant.billing.history', compact('payments'));
+    }
+
+    /**
+     * Download subscription receipt
+     */
+    public function downloadReceipt(SubscriptionPayment $payment)
+    {
+        $tenant = auth()->user()->tenant;
+
+        // Ensure payment belongs to tenant
+        if ($payment->tenant_id !== $tenant->id) {
+            abort(403);
+        }
+
+        return $this->subscriptionService->generateReceipt($payment);
     }
 }

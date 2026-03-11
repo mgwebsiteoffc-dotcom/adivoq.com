@@ -381,16 +381,31 @@ class InvoiceController extends Controller
             $invoice->update(['status' => 'sent', 'sent_at' => now()]);
         }
 
-        $whatsapp = new WhatsAppService();
-        $result = $whatsapp->sendInvoiceNotification($invoice, $brand->phone);
+        try {
+            // Generate and save invoice PDF
+            $pdfService = new InvoicePdfService();
+            $pdfService->save($invoice);
 
-        if ($result['success']) {
-            $invoice->logActivity('sent_whatsapp', "Invoice sent via WhatsApp to {$brand->phone}");
-            return back()->with('success', "Invoice sent via WhatsApp to {$brand->phone}!");
+            // Send PDF via WhatsApp
+            $whatsapp = new WhatsAppService();
+            $result = $whatsapp->sendInvoicePDF($invoice, $brand->phone);
+
+            if ($result['success']) {
+                $invoice->logActivity('sent_whatsapp', "Invoice PDF sent via WhatsApp to {$brand->phone}");
+                return back()->with('success', "Invoice PDF sent via WhatsApp to {$brand->phone}!");
+            }
+
+            return back()->with('error', 'WhatsApp sending failed: ' . ($result['error'] ?? 'Unknown error'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error sending invoice via WhatsApp', [
+                'invoice_id' => $invoice->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return back()->with('error', 'Error sending invoice: ' . $e->getMessage());
         }
-
-        return back()->with('error', 'WhatsApp sending failed: ' . ($result['error'] ?? 'Unknown error'));
     }
+
 
     public function generatePaymentLink(Invoice $invoice)
     {
@@ -471,11 +486,11 @@ class InvoiceController extends Controller
     public function sendReminder(Invoice $invoice)
     {
         $brand = $invoice->brand;
+        $tenant = auth()->user()->tenant;
 
         // Email reminder
         if ($brand->email) {
             try {
-                $tenant = auth()->user()->tenant;
                 Mail::raw(
                     "Dear {$brand->contact_person},\n\n" .
                     "This is a friendly reminder that invoice {$invoice->invoice_number} " .
@@ -495,11 +510,25 @@ class InvoiceController extends Controller
             }
         }
 
-        // WhatsApp reminder
-        $notifSettings = auth()->user()->tenant->notificationSetting;
+        // WhatsApp reminder - using template messages
+        $notifSettings = $tenant->notificationSetting;
         if ($notifSettings?->whatsapp_on_invoice_overdue && $brand->phone) {
-            $whatsapp = new WhatsAppService();
-            $whatsapp->sendPaymentReminder($invoice, $brand->phone);
+            try {
+                $whatsapp = new WhatsAppService();
+                
+                // Try to send using template message first (preferred)
+                $templateResult = $whatsapp->sendReminderTemplate($invoice, $brand->phone);
+                
+                // If template fails (e.g., not configured), fallback to plain text
+                if (!$templateResult['success']) {
+                    $whatsapp->sendPaymentReminder($invoice, $brand->phone);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Error sending WhatsApp reminder', [
+                    'invoice_id' => $invoice->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         $invoice->logActivity('reminder_sent', 'Payment reminder sent');
