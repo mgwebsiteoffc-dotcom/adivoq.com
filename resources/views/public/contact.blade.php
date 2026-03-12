@@ -14,9 +14,9 @@
             {{-- Contact Info --}}
             <div class="lg:col-span-2 space-y-6">
                 @foreach([
-                    ['icon' => 'fa-envelope', 'color' => 'brand', 'title' => 'Email Us', 'text' => 'hello@invoicehero.com', 'sub' => 'We reply within 24 hours'],
-                    ['icon' => 'fa-brands fa-whatsapp', 'color' => 'green', 'title' => 'WhatsApp', 'text' => '+91 99999 99999', 'sub' => 'Quick support on WhatsApp'],
-                    ['icon' => 'fa-clock', 'color' => 'orange', 'title' => 'Support Hours', 'text' => 'Mon - Sat, 10AM - 7PM IST', 'sub' => 'Except public holidays'],
+                    ['icon' => 'fa-envelope', 'color' => 'brand', 'title' => 'Email Us', 'text' => 'connect@adivoq.com', 'sub' => 'We reply within 24 hours'],
+                    ['icon' => 'fa-brands fa-whatsapp', 'color' => 'green', 'title' => 'WhatsApp', 'text' => '+91 89537 49734', 'sub' => 'Quick support on WhatsApp'],
+                    ['icon' => 'fa-clock', 'color' => 'orange', 'title' => 'Support Hours', 'text' => 'Mon - Fri, 10AM - 6PM IST', 'sub' => 'Except public holidays'],
                 ] as $info)
                     @php
                         $iconColors = ['brand' => 'bg-brand-100 text-brand-600', 'green' => 'bg-green-100 text-green-600', 'orange' => 'bg-orange-100 text-orange-600'];
@@ -36,7 +36,7 @@
                 <div class="pt-4">
                     <h3 class="text-sm font-bold text-gray-900 mb-3">Follow Us</h3>
                     <div class="flex space-x-3">
-                        @foreach([['icon' => 'fa-twitter', 'url' => '#'], ['icon' => 'fa-instagram', 'url' => '#'], ['icon' => 'fa-youtube', 'url' => '#'], ['icon' => 'fa-linkedin-in', 'url' => '#']] as $social)
+                        @foreach([['icon' => 'fa-whatsapp', 'url' => 'https://wa.me/918953749734?text=Hello%20I%20want%20more%20details%20about%AdivoQ'], ['icon' => 'fa-instagram', 'url' => 'https://www.instagram.com/adivoq/'], ['icon' => 'fa-facebook', 'url' => 'https://www.facebook.com/profile.php?id=61588558224081'], ['icon' => 'fa-linkedin-in', 'url' => '#']] as $social)
                             <a href="{{ $social['url'] }}" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:gradient-bg hover:text-white transition">
                                 <i class="fab {{ $social['icon'] }}"></i>
                             </a>

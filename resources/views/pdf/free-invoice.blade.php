@@ -96,7 +96,7 @@
     @endif
 
     <div class="footer">
-        Generated with InvoiceHero — Free Invoice Generator | invoicehero.com
+        Generated with AdivoQ — Free Invoice Generator | www.adivoq.com
     </div>
 </div>
 </body>

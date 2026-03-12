@@ -286,6 +286,7 @@
                         <li><a href="{{ route('privacy') }}" class="hover:text-white transition">Privacy Policy</a></li>
                         <li><a href="{{ route('terms') }}" class="hover:text-white transition">Terms of Service</a></li>
                         <li><a href="{{ route('refund') }}" class="hover:text-white transition">Refund Policy</a></li>
+                         <li><a href="{{ route('seo.sitemap') }}" class="hover:text-white transition">Sitemap</a></li>
                     </ul>
                 </div>
             </div>
