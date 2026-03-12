@@ -1,0 +1,77 @@
+/* public/assets/css/app.css */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+::selection {
+    background-color: rgba(139, 92, 246, 0.3);
+    color: #f8fafc;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+.spinner {
+    border: 2px solid rgba(139, 92, 246, 0.2);
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Invoice PDF Styles (DomPDF does not support Tailwind) */
+.invoice-pdf {
+    font-family: 'DejaVu Sans', Arial, sans-serif;
+    font-size: 12px;
+    color: #1e293b;
+    line-height: 1.5;
+}
+.invoice-pdf table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.invoice-pdf th {
+    background-color: #8b5cf6;
+    color: #ffffff;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+.invoice-pdf td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.invoice-pdf .text-right { text-align: right; }
+.invoice-pdf .font-bold { font-weight: bold; }
+.invoice-pdf .total-row {
+    background-color: #f1f5f9;
+    font-weight: bold;
+}
