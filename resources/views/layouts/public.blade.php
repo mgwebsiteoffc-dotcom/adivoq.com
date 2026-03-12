@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'InvoiceHero — Professional Invoicing for Content Creators')</title>
+    <title>@yield('title', 'AdivoQ — Professional Invoicing for Content Creators')</title>
     <meta name="description" content="@yield('meta_description', 'Professional invoicing & payment management platform built exclusively for content creators. GST compliant, automated reminders, payment links & more.')">
     <meta name="keywords" content="invoice creator, creator invoice, youtube invoice, instagram invoice, GST invoice, content creator billing">
 
     {{-- OG Tags --}}
-    <meta property="og:title" content="@yield('title', 'InvoiceHero — Invoicing for Creators')">
+    <meta property="og:title" content="@yield('title', 'AdivoQ — Invoicing for Creators')">
     <meta property="og:description" content="@yield('meta_description', 'Professional invoicing for content creators')">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
@@ -71,7 +71,7 @@
                         <div class="w-9 h-9 gradient-bg rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/25 group-hover:shadow-brand-500/40 transition-all">
                             <i class="fas fa-bolt text-white text-sm"></i>
                         </div>
-                        <span class="text-xl font-extrabold text-gray-900 tracking-tight">Invoice<span class="gradient-text">Hero</span></span>
+                        <span class="text-xl font-extrabold text-gray-900 tracking-tight">Adivo<span class="gradient-text">Q</span></span>
                     </a>
                 </div>
 
@@ -208,15 +208,15 @@
                         <div class="w-9 h-9 gradient-bg rounded-xl flex items-center justify-center">
                             <i class="fas fa-bolt text-white text-sm"></i>
                         </div>
-                        <span class="text-xl font-extrabold text-white">Invoice<span class="text-brand-400">Hero</span></span>
+                        <span class="text-xl font-extrabold text-white">Adivo<span class="text-brand-400">Q</span></span>
                     </a>
                     <p class="text-sm leading-relaxed text-gray-500 max-w-xs">
                         The #1 invoicing platform built for content creators. Manage brands, automate payments, stay GST compliant.
                     </p>
                     <div class="flex items-center space-x-4 mt-6">
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-twitter text-sm"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-instagram text-sm"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-youtube text-sm"></i></a>
+                        <a href="https://wa.me/918953749734?text=Hello%20I%20want%20more%20details%20about%AdivoQ" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-whatsapp text-sm"></i></a>
+                        <a href="https://www.instagram.com/adivoq/" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-instagram text-sm"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61588558224081" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-facebook text-sm"></i></a>
                         <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-linkedin-in text-sm"></i></a>
                     </div>
                 </div>
@@ -256,7 +256,7 @@
             </div>
 
             <div class="border-t border-gray-800 mt-14 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-                <p>&copy; {{ date('Y') }} InvoiceHero. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} AdivoQ. All rights reserved.</p>
                 <p class="mt-3 md:mt-0 flex items-center">
                     Made with <i class="fas fa-heart text-red-500 mx-1.5 text-xs"></i> for Creators in India
                 </p>
