@@ -9,6 +9,10 @@ class SettingController extends Controller
 {
     public function index()
     {
+        if (session()->has('success')) {
+            session()->keep(['success']);
+        }
+
         // pull stored values from DB and merge with defaults
         $stored = \App\Models\SystemSetting::allSettings();
 
@@ -44,11 +48,14 @@ class SettingController extends Controller
         ];
 
         foreach ($keys as $key) {
+            if ($key === 'maintenance_mode') {
+                $value = $request->boolean('maintenance_mode');
+                \App\Models\SystemSetting::set($key, $value);
+                continue;
+            }
+
             if ($request->has($key)) {
                 $value = $request->input($key);
-                if ($key === 'maintenance_mode') {
-                    $value = $request->boolean('maintenance_mode');
-                }
                 \App\Models\SystemSetting::set($key, $value);
                 // apply immediately to config as well
                 config()->set($this->configPathForKey($key), $value);
@@ -56,12 +63,10 @@ class SettingController extends Controller
         }
 
         // handle maintenance mode toggling
-        if ($request->filled('maintenance_mode')) {
-            if ($request->boolean('maintenance_mode') && !app()->isDownForMaintenance()) {
-                \Artisan::call('down');
-            } elseif (!$request->boolean('maintenance_mode') && app()->isDownForMaintenance()) {
-                \Artisan::call('up');
-            }
+        if ($request->boolean('maintenance_mode') && !app()->isDownForMaintenance()) {
+            \Artisan::call('down');
+        } elseif (!$request->boolean('maintenance_mode') && app()->isDownForMaintenance()) {
+            \Artisan::call('up');
         }
 
         return back()->with('success', 'Settings updated successfully.');

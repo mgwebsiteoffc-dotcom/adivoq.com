@@ -236,7 +236,13 @@ class SubscriptionService
             'generated_at' => now(),
         ];
 
-        $pdf = Pdf::loadView('tenant.billing.receipt', $data);
+        $pdf = Pdf::loadView('tenant.billing.receipt', $data)
+            ->setPaper('a4')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+                'enable_unicode' => true,
+            ]);
         return $pdf->download("subscription-receipt-{$payment->razorpay_payment_id}.pdf");
     }
 

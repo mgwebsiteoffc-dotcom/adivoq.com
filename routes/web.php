@@ -69,6 +69,14 @@ Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logou
 Route::get('/invitation/{token}', [App\Http\Controllers\Auth\InvitationController::class, 'show'])->name('invitation.show');
 Route::post('/invitation/{token}', [App\Http\Controllers\Auth\InvitationController::class, 'accept'])->name('invitation.accept');
 
+// Public HSN search and details
+Route::get('/hsn', [App\Http\Controllers\HsnWebController::class, 'search'])->name('hsn.search');
+Route::get('/hsn/{hsn}', [App\Http\Controllers\HsnWebController::class, 'show'])->name('hsn.show');
+
+// API: HSN codes search (public)
+Route::get('/api/hsn-codes/search', [App\Http\Controllers\HsnSacCodeController::class, 'search'])->name('api.hsn.search');
+Route::get('/api/hsn-codes/{id}', [App\Http\Controllers\HsnSacCodeController::class, 'show'])->name('api.hsn.show');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -279,6 +287,14 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'tenant'])->
             Route::put('/payment-gateway', [App\Http\Controllers\Tenant\SettingController::class, 'updatePaymentGateway'])->name('payment-gateway');
             Route::put('/password', [App\Http\Controllers\Tenant\SettingController::class, 'updatePassword'])->name('password');
             Route::get('/export/{type}', [App\Http\Controllers\Tenant\SettingController::class, 'export'])->name('export');
+            
+            // Tenant Services (Invoices line items, HSN management)
+            Route::resource('services', App\Http\Controllers\Tenant\TenantServiceController::class);
+            // API endpoints for services CRUD (called by Alpine.js)
+            Route::get('services/api/list', [App\Http\Controllers\Tenant\TenantServiceController::class, 'apiList'])->name('services.api-list');
+            Route::post('services/api/store', [App\Http\Controllers\Tenant\TenantServiceController::class, 'apiStore'])->name('services.api-store');
+            Route::delete('services/api/{id}', [App\Http\Controllers\Tenant\TenantServiceController::class, 'apiDestroy'])->name('services.api-destroy');
+            Route::get('services/api/search-hsn', [App\Http\Controllers\Tenant\TenantServiceController::class, 'searchHsn'])->name('services.search-hsn');
         });
 
         // --- Tracking & Analytics ---

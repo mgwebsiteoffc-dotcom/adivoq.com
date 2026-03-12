@@ -33,7 +33,9 @@ class InvoicePdfService
             ->setOptions([
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true,
-                'defaultFont' => 'sans-serif',
+                'defaultFont' => 'DejaVu Sans',
+                'enable_php' => true,
+                'enable_unicode' => true,
             ]);
     }
 

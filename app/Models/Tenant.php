@@ -56,6 +56,7 @@ class Tenant extends Model
     public function subscriptionPayments() { return $this->hasMany(SubscriptionPayment::class); }
     public function trackingKeys() { return $this->hasMany(TrackingKey::class); }
     public function whatsappChatbots() { return $this->hasMany(WhatsAppChatbotConfig::class); }
+    public function services() { return $this->hasMany(TenantService::class); }
 
     // Helpers
     public function isActive(): bool { return $this->status === 'active'; }

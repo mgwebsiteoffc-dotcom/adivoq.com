@@ -94,7 +94,11 @@ class ToolController extends Controller
 
         $pdf = Pdf::loadView('pdf.free-invoice', $data)
             ->setPaper('a4')
-            ->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+                'enable_unicode' => true,
+            ]);
 
         return $pdf->download("Invoice-{$request->invoice_number}.pdf");
     }

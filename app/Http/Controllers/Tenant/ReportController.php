@@ -257,13 +257,25 @@ class ReportController extends Controller
     if ($type === 'profit-loss') {
         // reuse same logic
         $viewData = $this->profitLoss($request)->getData();
-        $pdf = Pdf::loadView('pdf.reports.profit-loss', array_merge($viewData, ['tenant' => $tenant]));
+        $pdf = Pdf::loadView('pdf.reports.profit-loss', array_merge($viewData, ['tenant' => $tenant]))
+            ->setPaper('a4')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+                'enable_unicode' => true,
+            ]);
         return $pdf->download('profit-loss-' . now()->format('Y-m-d') . '.pdf');
     }
 
     if ($type === 'tax-summary') {
         $viewData = $this->taxSummary($request)->getData();
-        $pdf = Pdf::loadView('pdf.reports.tax-summary', array_merge($viewData, ['tenant' => $tenant]));
+        $pdf = Pdf::loadView('pdf.reports.tax-summary', array_merge($viewData, ['tenant' => $tenant]))
+            ->setPaper('a4')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+                'enable_unicode' => true,
+            ]);
         return $pdf->download('tax-summary-' . now()->format('Y-m-d') . '.pdf');
     }
 

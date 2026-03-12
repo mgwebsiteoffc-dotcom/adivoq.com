@@ -2,6 +2,27 @@
 @section('title', $post ? 'Edit Post' : 'New Post')
 @section('page_title', $post ? 'Edit Post' : 'Create Blog Post')
 
+@push('scripts')
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            tinymce.init({
+                selector: '#blog-content',
+                height: 400,
+                menubar: 'file edit view insert format tools table help',
+                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
+                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | removeformat code fullscreen',
+                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }',
+                image_title: true,
+                automatic_uploads: true,
+                file_picker_types: 'image',
+                branding: false,
+                promotion: false
+            });
+        });
+    </script>
+@endpush
+
 @section('content')
 <div class="max-w-4xl">
     <a href="{{ route('admin.blog-posts.index') }}" class="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block"><i class="fas fa-arrow-left mr-1"></i>Back</a>
@@ -26,9 +47,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Content *</label>
-                        <textarea name="content" rows="20" required
-                                  class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 font-mono">{{ old('content', $post?->content) }}</textarea>
-                        <p class="text-xs text-gray-400 mt-1">HTML is supported.</p>
+                        <textarea id="blog-content" name="content" required>{{ old('content', $post?->content) }}</textarea>
                         @error('content') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -91,4 +110,5 @@
         </div>
     </form>
 </div>
+
 @endsection

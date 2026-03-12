@@ -1,5 +1,5 @@
 @extends('layouts.public')
-@section('title', 'Creator Guides — InvoiceHero')
+@section('title', 'Creator Guides - InvoiceHero')
 
 @section('content')
 <section class="py-12 lg:py-20">

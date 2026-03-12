@@ -1,6 +1,5 @@
-
 @extends('layouts.public')
-@section('title', ($post->meta_title ?: $post->title) . ' — InvoiceHero Blog')
+@section('title', ($post->meta_title ?: $post->title) . ' - InvoiceHero Blog')
 @section('meta_description', $post->meta_description ?: $post->excerpt)
 
 @section('content')

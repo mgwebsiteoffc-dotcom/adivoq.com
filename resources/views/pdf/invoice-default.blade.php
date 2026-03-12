@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12px; color: #333; line-height: 1.5; }
+        body { font-family: 'DejaVu Sans', 'Arial', sans-serif; font-size: 12px; color: #333; line-height: 1.5; }
         .invoice-container { padding: 30px; }
         .header { display: flex; justify-content: space-between; margin-bottom: 30px; }
         .company-info { max-width: 50%; }

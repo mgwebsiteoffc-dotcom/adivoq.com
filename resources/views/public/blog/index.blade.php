@@ -1,5 +1,5 @@
 @extends('layouts.public')
-@section('title', 'Blog — InvoiceHero')
+@section('title', 'Blog - InvoiceHero')
 @section('meta_description', 'Tips, guides, and insights on invoicing, taxes, and growing your creator business in India.')
 
 @section('content')

@@ -3,6 +3,19 @@
 @section('page_title','Settings')
 
 @section('content')
+<!-- Quick Links -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <a href="{{ route('dashboard.settings.services.index') }}" class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-6 hover:shadow-lg transition">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-sm font-black text-gray-900 mb-1">Service Catalog</h3>
+                <p class="text-xs text-gray-600">Create reusable invoice services with HSN codes</p>
+            </div>
+            <i class="fas fa-arrow-right text-purple-600"></i>
+        </div>
+    </a>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     {{-- Profile --}}

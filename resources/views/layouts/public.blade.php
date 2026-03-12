@@ -81,6 +81,7 @@
                         $navLinks = [
                             ['url' => route('tools.invoice-generator'), 'label' => 'Free Invoice', 'icon' => 'fa-file-invoice'],
                             ['url' => route('tools.tax-calculator'), 'label' => 'Tax Calculator', 'icon' => 'fa-calculator'],
+                            ['url' => route('hsn.search'), 'label' => 'HSN Search', 'icon' => 'fa-barcode'],
                             ['url' => route('blog.index'), 'label' => 'Blog', 'icon' => 'fa-pen-nib'],
                             ['url' => route('guides.index'), 'label' => 'Guides', 'icon' => 'fa-book-open'],
                             ['url' => route('roadmap'), 'label' => 'Roadmap', 'icon' => 'fa-map'],
@@ -239,6 +240,7 @@
                     <ul class="space-y-3 text-sm">
                         <li><a href="{{ route('blog.index') }}" class="hover:text-white transition">Blog</a></li>
                         <li><a href="{{ route('guides.index') }}" class="hover:text-white transition">Creator Guides</a></li>
+                        <li><a href="{{ route('hsn.search') }}" class="hover:text-white transition">HSN/SAC Code Finder</a></li>
                         <li><a href="{{ route('contact') }}" class="hover:text-white transition">Contact Us</a></li>
                         <li><a href="{{ route('home') }}#faq" class="hover:text-white transition">FAQ</a></li>
                     </ul>

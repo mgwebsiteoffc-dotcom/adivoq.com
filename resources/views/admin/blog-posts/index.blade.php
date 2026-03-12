@@ -54,14 +54,14 @@
                             </div>
                         </div>
                     </td>
-                    <td class="px-4 py-3 text-gray-600">{{ $post->category->name ?? '—' }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ $post->category->name ?? '-' }}</td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-0.5 text-xs font-medium rounded-full
                             {{ $post->status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
                             {{ ucfirst($post->status) }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-gray-500 text-xs">{{ $post->published_at?->format('M d, Y') ?? '—' }}</td>
+                    <td class="px-4 py-3 text-gray-500 text-xs">{{ $post->published_at?->format('M d, Y') ?? '-' }}</td>
                     <td class="px-4 py-3 text-right">
                         <a href="{{ route('blog.show', $post->slug) }}" target="_blank" class="text-gray-400 hover:text-gray-600 text-xs mr-2"><i class="fas fa-external-link-alt"></i></a>
                         <a href="{{ route('admin.blog-posts.edit', $post) }}" class="text-blue-600 hover:text-blue-800 text-xs mr-2">Edit</a>
