@@ -1,5 +1,6 @@
 @extends('layouts.public')
 @section('title', 'Payment Status — ' . $invoice->invoice_number)
+@section('meta_robots', 'noindex,nofollow,noarchive,nosnippet')
 
 @section('content')
 <section class="py-12 lg:py-20">

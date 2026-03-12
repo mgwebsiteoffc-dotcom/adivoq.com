@@ -1,5 +1,21 @@
 @extends('layouts.public')
 @section('title', 'Creator Guides - InvoiceHero')
+@section('meta_description', 'Step-by-step creator guides for invoicing, GST, TDS, payment workflows, and finance operations.')
+@push('schema')
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::collectionPageSchema(
+            'AdivoQ Guides',
+            'Step-by-step creator guides for invoicing, GST, TDS, payment workflows, and finance operations.',
+            route('guides.index')
+        ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::breadcrumbSchema([
+            ['name' => 'Home', 'url' => route('home')],
+            ['name' => 'Guides', 'url' => route('guides.index')],
+        ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+@endpush
 
 @section('content')
 <section class="py-12 lg:py-20">

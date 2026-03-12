@@ -1,5 +1,19 @@
 @extends('layouts.public')
 @section('title', $guide->title . ' - InvoiceHero Guides')
+@section('meta_description', $guide->description ?: 'Step-by-step guide from AdivoQ for creators and small businesses.')
+@section('meta_image', $guide->cover_image ? asset('storage/' . $guide->cover_image) : asset('favicon.ico'))
+@push('schema')
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::howToSchema($guide), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::breadcrumbSchema([
+            ['name' => 'Home', 'url' => route('home')],
+            ['name' => 'Guides', 'url' => route('guides.index')],
+            ['name' => $guide->title, 'url' => route('guides.show', $guide->slug)],
+        ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+@endpush
 
 @section('content')
 <section class="py-12 lg:py-20">

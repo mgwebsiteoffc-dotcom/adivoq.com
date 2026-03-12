@@ -1,6 +1,20 @@
 @extends('layouts.public')
 @section('title', ($post->meta_title ?: $post->title) . ' - InvoiceHero Blog')
 @section('meta_description', $post->meta_description ?: $post->excerpt)
+@section('meta_image', $post->cover_image ? asset('storage/' . $post->cover_image) : asset('favicon.ico'))
+@push('schema')
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::blogPostingSchema($post), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::breadcrumbSchema(array_filter([
+            ['name' => 'Home', 'url' => route('home')],
+            ['name' => 'Blog', 'url' => route('blog.index')],
+            $post->category ? ['name' => $post->category->name, 'url' => route('blog.index', ['category' => $post->category->slug])] : null,
+            ['name' => $post->title, 'url' => route('blog.show', $post->slug)],
+        ])), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+@endpush
 
 @section('content')
 <article class="py-12 lg:py-20">

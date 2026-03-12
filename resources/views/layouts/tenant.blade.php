@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') - InvoiceHero</title>
+    <title>@yield('title') - AdivoQ</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -30,7 +30,7 @@
         <div class="p-4 border-b border-gray-100 flex items-center justify-between">
             <a href="{{ route('dashboard.home') }}" class="flex items-center">
                 <i class="fas fa-file-invoice-dollar text-2xl text-indigo-600"></i>
-                <span x-show="sidebarOpen" class="ml-2 text-lg font-black text-gray-900">InvoiceHero</span>
+                <span x-show="sidebarOpen" class="ml-2 text-lg font-black text-gray-900">AdivoQ</span>
             </a>
 
             <button @click="sidebarOpen = !sidebarOpen" class="text-gray-400 hover:text-gray-700">

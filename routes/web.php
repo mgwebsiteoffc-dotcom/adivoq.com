@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [App\Http\Controllers\Public\HomeController::class, 'index'])->name('home');
+Route::get('/sitemap.xml', [App\Http\Controllers\Public\SeoController::class, 'sitemap'])->name('seo.sitemap');
+Route::get('/robots.txt', [App\Http\Controllers\Public\SeoController::class, 'robots'])->name('seo.robots');
+Route::get('/llms.txt', [App\Http\Controllers\Public\SeoController::class, 'llms'])->name('seo.llms');
 
 Route::get('/blog', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');

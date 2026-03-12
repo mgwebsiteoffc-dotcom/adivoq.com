@@ -1,18 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
+    @php
+        $seoCanonical = trim($__env->yieldContent('canonical', url()->current()));
+        $seoRobots = trim($__env->yieldContent('meta_robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'));
+        $seoImage = trim($__env->yieldContent('meta_image', asset('favicon.ico')));
+    @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'InvoiceHero — Professional Invoicing for Content Creators')</title>
+    <title>@yield('title', 'AdivoQ — Professional Invoicing for Content Creators')</title>
     <meta name="description" content="@yield('meta_description', 'Professional invoicing & payment management platform built exclusively for content creators. GST compliant, automated reminders, payment links & more.')">
     <meta name="keywords" content="invoice creator, creator invoice, youtube invoice, instagram invoice, GST invoice, content creator billing">
+    <meta name="robots" content="{{ $seoRobots }}">
+    <meta name="googlebot" content="{{ $seoRobots }}">
+    <meta name="bingbot" content="{{ $seoRobots }}">
+    <link rel="canonical" href="{{ $seoCanonical }}">
+    <link rel="alternate" type="application/xml" title="Sitemap" href="{{ route('seo.sitemap') }}">
+    <link rel="alternate" type="text/plain" title="LLMs" href="{{ route('seo.llms') }}">
 
     {{-- OG Tags --}}
-    <meta property="og:title" content="@yield('title', 'InvoiceHero — Invoicing for Creators')">
+    <meta property="og:title" content="@yield('title', 'AdivoQ — Invoicing for Creators')">
     <meta property="og:description" content="@yield('meta_description', 'Professional invoicing for content creators')">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{ \App\Support\PublicSeo::siteName() }}">
+    <meta property="og:image" content="{{ $seoImage }}">
+    <meta property="og:locale" content="en_IN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', config('app.name', 'AdivoQ'))">
+    <meta name="twitter:description" content="@yield('meta_description', 'Professional invoicing for content creators')">
+    <meta name="twitter:image" content="{{ $seoImage }}">
 
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,6 +73,21 @@
         .hero-pattern { background-image: radial-gradient(circle at 1px 1px, rgba(99,102,241,0.08) 1px, transparent 0); background-size: 40px 40px; }
     </style>
     @stack('styles')
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::organizationSchema(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::websiteSchema(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::webPageSchema([
+            'name' => trim($__env->yieldContent('title', config('app.name', 'AdivoQ'))),
+            'description' => trim($__env->yieldContent('meta_description', 'Professional invoicing for content creators')),
+            'url' => $seoCanonical,
+            'image' => $seoImage,
+        ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+    @stack('schema')
 
     <!-- Third-Party Tracking Codes -->
     {!! \App\Services\EventTrackingService::renderAllEnabled() !!}
@@ -71,7 +104,7 @@
                         <div class="w-9 h-9 gradient-bg rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/25 group-hover:shadow-brand-500/40 transition-all">
                             <i class="fas fa-bolt text-white text-sm"></i>
                         </div>
-                        <span class="text-xl font-extrabold text-gray-900 tracking-tight">Invoice<span class="gradient-text">Hero</span></span>
+                        <span class="text-xl font-extrabold text-gray-900 tracking-tight">Adivo<span class="gradient-text">Q</span></span>
                     </a>
                 </div>
 
@@ -209,15 +242,15 @@
                         <div class="w-9 h-9 gradient-bg rounded-xl flex items-center justify-center">
                             <i class="fas fa-bolt text-white text-sm"></i>
                         </div>
-                        <span class="text-xl font-extrabold text-white">Invoice<span class="text-brand-400">Hero</span></span>
+                        <span class="text-xl font-extrabold text-white">Adivo<span class="text-brand-400">Q</span></span>
                     </a>
                     <p class="text-sm leading-relaxed text-gray-500 max-w-xs">
                         The #1 invoicing platform built for content creators. Manage brands, automate payments, stay GST compliant.
                     </p>
                     <div class="flex items-center space-x-4 mt-6">
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-twitter text-sm"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-instagram text-sm"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-youtube text-sm"></i></a>
+                        <a href="https://wa.me/918953749734?text=Hello%20I%20want%20more%20details%20about%AdivoQ" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-whatsapp text-sm"></i></a>
+                        <a href="https://www.instagram.com/adivoq/" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-instagram text-sm"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61588558224081" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-facebook text-sm"></i></a>
                         <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition"><i class="fab fa-linkedin-in text-sm"></i></a>
                     </div>
                 </div>
@@ -258,7 +291,7 @@
             </div>
 
             <div class="border-t border-gray-800 mt-14 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-                <p>&copy; {{ date('Y') }} InvoiceHero. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} AdivoQ. All rights reserved.</p>
                 <p class="mt-3 md:mt-0 flex items-center">
                     Made with <i class="fas fa-heart text-red-500 mx-1.5 text-xs"></i> for Creators in India
                 </p>

@@ -1,6 +1,21 @@
 @extends('layouts.public')
 @section('title', 'Blog - InvoiceHero')
 @section('meta_description', 'Tips, guides, and insights on invoicing, taxes, and growing your creator business in India.')
+@push('schema')
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::collectionPageSchema(
+            'AdivoQ Blog',
+            'Tips, guides, and insights on invoicing, taxes, and growing your creator business in India.',
+            route('blog.index')
+        ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode(\App\Support\PublicSeo::breadcrumbSchema([
+            ['name' => 'Home', 'url' => route('home')],
+            ['name' => 'Blog', 'url' => route('blog.index')],
+        ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+@endpush
 
 @section('content')
 <section class="py-12 lg:py-20">
