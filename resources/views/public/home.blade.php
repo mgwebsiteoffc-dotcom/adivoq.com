@@ -1,5 +1,5 @@
 @extends('layouts.public')
-@section('title', 'InvoiceHero — Professional Invoicing for Content Creators')
+@section('title', 'AdivoQ — Professional Invoicing for Content Creators')
 
 @section('content')
 

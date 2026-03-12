@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'name' => env('APP_NAME', 'InvoiceHero'),
+    'name' => env('APP_NAME', 'AdivoQ'),
 
     'plans' => [
         'free' => [
